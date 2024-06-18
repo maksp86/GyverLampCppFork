@@ -116,7 +116,9 @@ void rain()
         // Step 5. Add lightning if called for
         if (storm) {
             if (!lightning) {
+                #ifdef USE_DEBUG
                 Serial.println("lightning malloc failed");
+#endif
                 return;
             } else {
                 memset(lightning, 0, myMatrix->getNumLeds() * sizeof(*lightning));
@@ -158,7 +160,9 @@ void rain()
         // Step 6. Add clouds if called for
         if (clouds) {
             if (!noise) {
+                #ifdef USE_DEBUG
                 Serial.println("noise malloc failed");
+#endif
                 return;
             } else {
                 memset(noise, 0, mySettings->matrixSettings.width * cloudHeight * sizeof(*noise));

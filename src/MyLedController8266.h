@@ -1,6 +1,6 @@
 #pragma once
 #if __cplusplus > 199711L 
-    #define register
+#define register
 #endif
 #include <FastLED.h>
 
@@ -18,15 +18,15 @@ public:
 FASTLED_NAMESPACE_BEGIN
 
 // Info on reading cycle counter from https://github.com/kbeckmann/nodemcu-firmware/blob/ws2812-dual/app/modules/ws2812.c
-__attribute__ ((always_inline)) inline static uint32_t __clock_custom_cycles() {
-  uint32_t cyc;
-  __asm__ __volatile__ ("rsr %0,ccount":"=a" (cyc));
-  return cyc;
+__attribute__((always_inline)) inline static uint32_t __clock_custom_cycles() {
+    uint32_t cyc;
+    __asm__ __volatile__("rsr %0,ccount":"=a" (cyc));
+    return cyc;
 }
 
 template <int T1, int T2, int T3, EOrder RGB_ORDER = RGB, int WAIT_TIME = 50>
 class ClocklessCustomController : public CPixelLEDController<RGB_ORDER> {
-    typedef volatile RwReg * data_ptr_t;
+    typedef volatile RwReg* data_ptr_t;
     typedef RwReg data_t;
 
     data_t mPinMask;
@@ -40,8 +40,10 @@ public:
 
     virtual void init()
     {
+#ifdef USE_DEBUG
         Serial.print(F("Using led pin: "));
         Serial.println(ledPin);
+#endif
 
         pinMode(ledPin, OUTPUT);
         mPinMask = ledPin == 16 ? 1 : (1UL << ledPin);
@@ -55,7 +57,7 @@ public:
 
 protected:
 
-    virtual void showPixels(PixelController<RGB_ORDER> & pixels)
+    virtual void showPixels(PixelController<RGB_ORDER>& pixels)
     {
         // mWait.wait();
         int cnt = FASTLED_INTERRUPT_RETRY_COUNT;
@@ -66,15 +68,15 @@ protected:
             os_intr_unlock();
             delayMicroseconds(WAIT_TIME);
             os_intr_lock();
-        }
     }
+}
 
     template<int BITS>
-    __attribute__ ((always_inline)) inline void writeBits(uint32_t & last_mark, uint32_t b)
+    __attribute__((always_inline)) inline void writeBits(uint32_t& last_mark, uint32_t b)
     {
         b <<= 24; b = ~b;
         for (uint32_t i = BITS; i > 0; i--) {
-            while((__clock_custom_cycles() - last_mark) < (T1 + T2 + T3));
+            while ((__clock_custom_cycles() - last_mark) < (T1 + T2 + T3));
             last_mark = __clock_custom_cycles();
             *mPort |= mPinMask;
 
@@ -84,7 +86,7 @@ protected:
             }
             b <<= 1;
 
-            while((__clock_custom_cycles() - last_mark) < (T1 + T2));
+            while ((__clock_custom_cycles() - last_mark) < (T1 + T2));
             *mPort &= ~mPinMask;
         }
     }
@@ -120,8 +122,8 @@ protected:
 #if (FASTLED_ALLOW_INTERRUPTS == 1)
             os_intr_lock();
             // if interrupts took longer than 45µs, punt on the current frame
-            if ((int32_t)(__clock_custom_cycles()-last_mark) > 0) {
-                if ((int32_t)(__clock_custom_cycles()-last_mark) > (T1+T2+T3+((WAIT_TIME-INTERRUPT_THRESHOLD)*CLKS_PER_US))) {
+            if ((int32_t)(__clock_custom_cycles() - last_mark) > 0) {
+                if ((int32_t)(__clock_custom_cycles() - last_mark) > (T1 + T2 + T3 + ((WAIT_TIME - INTERRUPT_THRESHOLD) * CLKS_PER_US))) {
                     sei();
                     return 0;
                 }

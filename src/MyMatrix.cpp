@@ -7,73 +7,73 @@
 #include "MyLedController32.h"
 #endif
 
-namespace  {
+namespace {
 
-uint16_t numLeds = 0;
+    uint16_t numLeds = 0;
 
-CRGB* leds = nullptr;
+    CRGB* leds = nullptr;
 
-MyMatrix *object = nullptr;
+    MyMatrix* object = nullptr;
 
-const TProgmemRGBPalette16 WaterfallColors_p FL_PROGMEM = {
-  0x000000, 0x060707, 0x101110, 0x151717,
-  0x1C1D22, 0x242A28, 0x363B3A, 0x313634,
-  0x505552, 0x6B6C70, 0x98A4A1, 0xC1C2C1,
-  0xCACECF, 0xCDDEDD, 0xDEDFE0, 0xB2BAB9
-};
+    const TProgmemRGBPalette16 WaterfallColors_p FL_PROGMEM = {
+      0x000000, 0x060707, 0x101110, 0x151717,
+      0x1C1D22, 0x242A28, 0x363B3A, 0x313634,
+      0x505552, 0x6B6C70, 0x98A4A1, 0xC1C2C1,
+      0xCACECF, 0xCDDEDD, 0xDEDFE0, 0xB2BAB9
+    };
 
-const TProgmemRGBPalette16 *colorPallettes[] = {
-    &PartyColors_p,
-    &OceanColors_p,
-    &LavaColors_p,
-    &HeatColors_p,
-    &WaterfallColors_p,
-    &CloudColors_p,
-    &ForestColors_p,
-    &RainbowColors_p,
-    &RainbowStripeColors_p
-};
+    const TProgmemRGBPalette16* colorPallettes[] = {
+        &PartyColors_p,
+        &OceanColors_p,
+        &LavaColors_p,
+        &HeatColors_p,
+        &WaterfallColors_p,
+        &CloudColors_p,
+        &ForestColors_p,
+        &RainbowColors_p,
+        &RainbowStripeColors_p
+    };
 
-const CRGBPalette16 WoodFireColors_p = {
-    CRGB::Black, CRGB::OrangeRed, CRGB::Orange, CRGB::Gold
-};
-const CRGBPalette16 NormalFire_p = {
-    CRGB::Black, CRGB::Red, 0xff3c00, 0xff7800
-};
-const CRGBPalette16 NormalFire2_p = {
-    CRGB::Black, CRGB::FireBrick, 0xff3c00, 0xff7800
-};
-const CRGBPalette16 SodiumFireColors_p = {
-    CRGB::Black, CRGB::Orange, CRGB::Gold, CRGB::Goldenrod
-};
-const CRGBPalette16 CopperFireColors_p = {
-    CRGB::Black, CRGB::Green, CRGB::GreenYellow, CRGB::LimeGreen
-};
-const CRGBPalette16 AlcoholFireColors_p = {
-    CRGB::Black, CRGB::Blue, CRGB::DeepSkyBlue, CRGB::LightSkyBlue
-};
-const CRGBPalette16 RubidiumFireColors_p = {
-    CRGB::Black, CRGB::Indigo, CRGB::Indigo, CRGB::DarkBlue
-};
-const CRGBPalette16 PotassiumFireColors_p = {
-    CRGB::Indigo, CRGB::MediumPurple, CRGB::DeepPink
-};
-const CRGBPalette16 LithiumFireColors_p = {
-    CRGB::Black, CRGB::FireBrick, CRGB::Pink, CRGB::DeepPink
-};
-const CRGBPalette16 HeatColors_x = HeatColors_p;
-const CRGBPalette16 *firePalettes[] = {
-  &HeatColors_x,
-  &WoodFireColors_p,
-  &NormalFire_p,
-  &NormalFire2_p,
-  &LithiumFireColors_p,
-  &SodiumFireColors_p,
-  &CopperFireColors_p,
-  &AlcoholFireColors_p,
-  &RubidiumFireColors_p,
-  &PotassiumFireColors_p
-};
+    const CRGBPalette16 WoodFireColors_p = {
+        CRGB::Black, CRGB::OrangeRed, CRGB::Orange, CRGB::Gold
+    };
+    const CRGBPalette16 NormalFire_p = {
+        CRGB::Black, CRGB::Red, 0xff3c00, 0xff7800
+    };
+    const CRGBPalette16 NormalFire2_p = {
+        CRGB::Black, CRGB::FireBrick, 0xff3c00, 0xff7800
+    };
+    const CRGBPalette16 SodiumFireColors_p = {
+        CRGB::Black, CRGB::Orange, CRGB::Gold, CRGB::Goldenrod
+    };
+    const CRGBPalette16 CopperFireColors_p = {
+        CRGB::Black, CRGB::Green, CRGB::GreenYellow, CRGB::LimeGreen
+    };
+    const CRGBPalette16 AlcoholFireColors_p = {
+        CRGB::Black, CRGB::Blue, CRGB::DeepSkyBlue, CRGB::LightSkyBlue
+    };
+    const CRGBPalette16 RubidiumFireColors_p = {
+        CRGB::Black, CRGB::Indigo, CRGB::Indigo, CRGB::DarkBlue
+    };
+    const CRGBPalette16 PotassiumFireColors_p = {
+        CRGB::Indigo, CRGB::MediumPurple, CRGB::DeepPink
+    };
+    const CRGBPalette16 LithiumFireColors_p = {
+        CRGB::Black, CRGB::FireBrick, CRGB::Pink, CRGB::DeepPink
+    };
+    const CRGBPalette16 HeatColors_x = HeatColors_p;
+    const CRGBPalette16* firePalettes[] = {
+      &HeatColors_x,
+      &WoodFireColors_p,
+      &NormalFire_p,
+      &NormalFire2_p,
+      &LithiumFireColors_p,
+      &SodiumFireColors_p,
+      &CopperFireColors_p,
+      &AlcoholFireColors_p,
+      &RubidiumFireColors_p,
+      &PotassiumFireColors_p
+    };
 
 } // namespace
 
@@ -87,7 +87,7 @@ class WS2812CustomController : public ClocklessCustomController<C_NS(250), C_NS(
 
 FASTLED_NAMESPACE_END
 
-MyMatrix *MyMatrix::instance()
+MyMatrix* MyMatrix::instance()
 {
     return object;
 }
@@ -98,7 +98,9 @@ void MyMatrix::Initialize()
         return;
     }
 
+#ifdef USE_DEBUG
     Serial.println(F("Initializing MyMatrix"));
+#endif
 
     PinHolder::setLedPin(mySettings->matrixSettings.pin);
     uint8_t sizeWidth = mySettings->matrixSettings.width;
@@ -110,19 +112,27 @@ void MyMatrix::Initialize()
     FastLED.addLeds<WS2812CustomController, RGB>(leds, numLeds);
 
     uint8_t maxBrightness = mySettings->matrixSettings.maxBrightness;
+#ifdef USE_DEBUG
     Serial.printf_P(PSTR("Set max brightness to: %u\n"), maxBrightness);
+#endif
     FastLED.setBrightness(maxBrightness);
 
     uint32_t currentLimit = mySettings->matrixSettings.currentLimit;
+#ifdef USE_DEBUG
     Serial.printf_P(PSTR("Set current limit to: %u\n"), currentLimit);
+#endif
     FastLED.setMaxPowerInVoltsAndMilliamps(5, currentLimit);
 
     uint8_t dither = mySettings->matrixSettings.dither ? 1 : 0;
+#ifdef USE_DEBUG
     Serial.printf_P(PSTR("Set dither: %u\n"), dither);
+#endif
 
     object = new MyMatrix(leds, sizeWidth, sizeHeight, matrixType);
     uint8_t rotation = mySettings->matrixSettings.rotation;
+#ifdef USE_DEBUG
     Serial.printf_P(PSTR("Set rotation to: %u\n"), rotation);
+#endif
     object->setRotation(rotation);
 
     object->begin();
@@ -140,14 +150,14 @@ uint16_t MyMatrix::getNumLeds()
     return numLeds;
 }
 
-const TProgmemRGBPalette16 *MyMatrix::GetColorPalette(uint8_t pct)
+const TProgmemRGBPalette16* MyMatrix::GetColorPalette(uint8_t pct)
 {
-    return colorPallettes[(uint8_t)(pct / 100.0f * ((sizeof(colorPallettes) / sizeof(TProgmemRGBPalette16 *)) - 0.01f))];
+    return colorPallettes[(uint8_t)(pct / 100.0f * ((sizeof(colorPallettes) / sizeof(TProgmemRGBPalette16*)) - 0.01f))];
 }
 
-const CRGBPalette16 *MyMatrix::GetFirePalette(uint8_t pct)
+const CRGBPalette16* MyMatrix::GetFirePalette(uint8_t pct)
 {
-    return firePalettes[(uint8_t)(pct / 100.0f * ((sizeof(firePalettes) / sizeof(CRGBPalette16 *)) - 0.01f))];
+    return firePalettes[(uint8_t)(pct / 100.0f * ((sizeof(firePalettes) / sizeof(CRGBPalette16*)) - 0.01f))];
 }
 
 uint8_t MyMatrix::getCenterX()
@@ -164,12 +174,13 @@ uint8_t MyMatrix::getDimension()
 {
     if (type & NEO_MATRIX_ROWS) {
         return width();
-    } else {
+    }
+    else {
         return height();
     }
 }
 
-CRGB *MyMatrix::getLeds()
+CRGB* MyMatrix::getLeds()
 {
     return leds;
 }
@@ -179,7 +190,7 @@ void MyMatrix::setCurrentLimit(uint32_t maxCurrent)
     FastLED.setMaxPowerInVoltsAndMilliamps(5, maxCurrent);
 }
 
-MyMatrix::MyMatrix(CRGB *leds, uint8_t w, uint8_t h, uint8_t matrixType)
+MyMatrix::MyMatrix(CRGB* leds, uint8_t w, uint8_t h, uint8_t matrixType)
     : FastLED_NeoMatrix(leds, w, h, 1, 1, matrixType)
 {
 }
@@ -228,21 +239,24 @@ CRGB MyMatrix::swapChannels(CRGB color)
     if (mySettings->matrixSettings.order.charAt(0) != 'r') {
         if (mySettings->matrixSettings.order.charAt(0) == 'g') {
             result.r = color.g;
-        } else {
+        }
+        else {
             result.r = color.b;
         }
     }
     if (mySettings->matrixSettings.order.charAt(1) != 'g') {
         if (mySettings->matrixSettings.order.charAt(1) == 'r') {
             result.g = color.r;
-        } else {
+        }
+        else {
             result.g = color.b;
         }
     }
     if (mySettings->matrixSettings.order.charAt(2) != 'b') {
         if (mySettings->matrixSettings.order.charAt(2) == 'r') {
             result.b = color.r;
-        } else {
+        }
+        else {
             result.b = color.g;
         }
     }
@@ -303,19 +317,20 @@ void MyMatrix::fadePixel(uint8_t x, uint8_t y, uint8_t step)
 void MyMatrix::fadePixel(uint16_t i, uint8_t step)
 {
     if (leds[i].r >= 30 ||
-            leds[i].g >= 30 ||
-            leds[i].b >= 30) {
+        leds[i].g >= 30 ||
+        leds[i].b >= 30) {
         leds[i].fadeToBlackBy(step);
-    } else {
+    }
+    else {
         leds[i] = 0;
     }
 }
 
-uint32_t MyMatrix::colorcode(const CRGB &color)
+uint32_t MyMatrix::colorcode(const CRGB& color)
 {
-    return uint32_t{color.r} << 16 |
-           uint32_t{color.g} << 8 |
-           uint32_t{color.b};
+    return uint32_t{ color.r } << 16 |
+        uint32_t{ color.g } << 8 |
+        uint32_t{ color.b };
 }
 
 void MyMatrix::applyBlur2d(uint8_t amount)
@@ -387,7 +402,7 @@ void MyMatrix::shadePixelXY(uint8_t x, uint8_t y, CRGB color)
     leds[myMatrix->getPixelNumberXY(x, y)] -= swapChannels(color);
 }
 
-void MyMatrix::blendPixelXY(uint8_t x, uint8_t y, const CRGB &color, uint8_t amount)
+void MyMatrix::blendPixelXY(uint8_t x, uint8_t y, const CRGB& color, uint8_t amount)
 {
     nblend(leds[myMatrix->getPixelNumberXY(x, y)], swapChannels(color), amount);
 }
@@ -415,12 +430,13 @@ void MyMatrix::fadePixelXY(uint8_t x, uint8_t y, uint8_t step)
 
     if (color.r >= 30 || color.g >= 30 || color.b >= 30) {
         myMatrix->fadeToBlackBy(pixelNum, step);
-    } else {
+    }
+    else {
         myMatrix->setLed(pixelNum, CRGB::Black);
     }
 }
 
-void MyMatrix::getCharBounds(char c, int16_t *xx, int16_t *yy, uint16_t *ww, uint16_t *hh)
+void MyMatrix::getCharBounds(char c, int16_t* xx, int16_t* yy, uint16_t* ww, uint16_t* hh)
 {
     int16_t minx = 0x7FFF, miny = 0x7FFF, maxx = -1, maxy = -1; // Bound rect
     // Bound rect is intentionally initialized inverted, so 1st char sets it
@@ -430,11 +446,11 @@ void MyMatrix::getCharBounds(char c, int16_t *xx, int16_t *yy, uint16_t *ww, uin
     charBounds(c, &x, &y, &minx, &miny, &maxx, &maxy);
 
     if (maxx >= minx) {     // If legit string bounds were found...
-      *xx = minx;           // Update x1 to least X coord,
-      *ww = maxx - minx + 1; // And w to bound rect width
+        *xx = minx;           // Update x1 to least X coord,
+        *ww = maxx - minx + 1; // And w to bound rect width
     }
     if (maxy >= miny) { // Same for height
-      *yy = miny;
-      *hh = maxy - miny + 1;
+        *yy = miny;
+        *hh = maxy - miny + 1;
     }
 }

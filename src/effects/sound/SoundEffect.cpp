@@ -4,7 +4,7 @@
 #if defined(ESP32)
 #include <driver/adc.h>
 #endif
-#include <arduinoFFT.h>
+#include <ArduinoFFT.h>
 #include <limits.h>
 
 namespace  {
@@ -104,10 +104,10 @@ void SoundEffect::tick()
         }
     }
 
-    arduinoFFT FFT(vReal, vImag, SAMPLES, samplingFrequency);
-    FFT.Windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);
-    FFT.Compute(FFT_FORWARD);
-    FFT.ComplexToMagnitude();
+    ArduinoFFT<double> FFT = ArduinoFFT<double>(vReal, vImag, SAMPLES, samplingFrequency);
+    FFT.windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);
+    FFT.compute(FFT_FORWARD);
+    FFT.complexToMagnitude();
 
     delete[] vImag;
 

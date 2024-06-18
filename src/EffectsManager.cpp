@@ -12,30 +12,30 @@
 #include "effects/basic/ColorsEffect.h"
 #include "effects/basic/SnowEffect.h"
 #include "effects/basic/LightersEffect.h"
-#include "effects/basic/ClockEffect.h"
-#include "effects/basic/ClockHorizontal1Effect.h"
-#include "effects/basic/ClockHorizontal2Effect.h"
-#include "effects/basic/ClockHorizontal3Effect.h"
+// #include "effects/basic/ClockEffect.h"
+// #include "effects/basic/ClockHorizontal1Effect.h"
+// #include "effects/basic/ClockHorizontal2Effect.h"
+// #include "effects/basic/ClockHorizontal3Effect.h"
 #include "effects/basic/StarfallEffect.h"
 #include "effects/basic/DiagonalRainbowEffect.h"
 
-#include "effects/noise/MadnessNoiseEffect.h"
-#include "effects/noise/CloudNoiseEffect.h"
-#include "effects/noise/LavaNoiseEffect.h"
-#include "effects/noise/PlasmaNoiseEffect.h"
-#include "effects/noise/RainbowNoiseEffect.h"
-#include "effects/noise/RainbowStripeNoiseEffect.h"
-#include "effects/noise/ZebraNoiseEffect.h"
-#include "effects/noise/ForestNoiseEffect.h"
-#include "effects/noise/OceanNoiseEffect.h"
+// #include "effects/noise/MadnessNoiseEffect.h"
+// #include "effects/noise/CloudNoiseEffect.h"
+// #include "effects/noise/LavaNoiseEffect.h"
+// #include "effects/noise/PlasmaNoiseEffect.h"
+// #include "effects/noise/RainbowNoiseEffect.h"
+// #include "effects/noise/RainbowStripeNoiseEffect.h"
+// #include "effects/noise/ZebraNoiseEffect.h"
+// #include "effects/noise/ForestNoiseEffect.h"
+// #include "effects/noise/OceanNoiseEffect.h"
 
-#include "effects/sound/SoundEffect.h"
-#include "effects/sound/SoundStereoEffect.h"
+// #include "effects/sound/SoundEffect.h"
+// #include "effects/sound/SoundStereoEffect.h"
 
 #include "effects/basic/WaterfallEffect.h"
 #include "effects/basic/TwirlRainbowEffect.h"
 #include "effects/basic/PulseCirclesEffect.h"
-#include "effects/basic/AnimationEffect.h"
+// #include "effects/basic/AnimationEffect.h"
 #include "effects/basic/StormEffect.h"
 #include "effects/basic/Matrix2Effect.h"
 #include "effects/basic/TrackingLightersEffect.h"
@@ -64,30 +64,30 @@
 #include "effects/aurora/WhirlEffect.h"
 #include "effects/aurora/WaveEffect.h"
 
-#include "effects/basic/Fire12Effect.h"
-#include "effects/basic/Fire18Effect.h"
-#include "effects/basic/RainNeoEffect.h"
-#include "effects/basic/TwinklesEffect.h"
+// #include "effects/basic/Fire12Effect.h"
+// #include "effects/basic/Fire18Effect.h"
+// #include "effects/basic/RainNeoEffect.h"
+// #include "effects/basic/TwinklesEffect.h"
 
-#include "effects/network/DMXEffect.h"
+// #include "effects/network/DMXEffect.h"
 
-#include "effects/basic/ScrollingTextEffect.h"
+// #include "effects/basic/ScrollingTextEffect.h"
 
 #include <map>
 
-namespace  {
+namespace {
 
-EffectsManager *object = nullptr;
+    EffectsManager* object = nullptr;
 
-std::map<String, Effect*> effectsMap;
+    std::map<String, Effect*> effectsMap;
 
-uint32_t effectTimer = 0;
+    uint32_t effectTimer = 0;
 
-uint8_t activeIndex = 0;
+    uint8_t activeIndex = 0;
 
 } // namespace
 
-EffectsManager *EffectsManager::instance()
+EffectsManager* EffectsManager::instance()
 {
     return object;
 }
@@ -98,21 +98,25 @@ void EffectsManager::Initialize()
         return;
     }
 
+#ifdef USE_DEBUG
     Serial.println(F("Initializing EffectsManager"));
+#endif
     object = new EffectsManager();
 }
 
-void EffectsManager::processEffectSettings(const JsonObject &json)
+void EffectsManager::processEffectSettings(const JsonObject& json)
 {
     const String effectId = json[F("i")].as<String>();
 
     if (effectsMap.count(effectId) <= 0) {
+#ifdef USE_DEBUG
         Serial.print(F("Missing effect: "));
         Serial.println(effectId);
+#endif
         return;
     }
 
-    Effect *effect = effectsMap[effectId];
+    Effect* effect = effectsMap[effectId];
     effects.push_back(effect);
     effect->initialize(json);
 }
@@ -147,7 +151,8 @@ void EffectsManager::next()
     uint8_t aIndex = activeIndex;
     if (aIndex == effects.size() - 1) {
         aIndex = 0;
-    } else {
+    }
+    else {
         ++aIndex;
     }
     activateEffect(aIndex);
@@ -159,16 +164,17 @@ void EffectsManager::previous()
     uint8_t aIndex = activeIndex;
     if (aIndex == 0) {
         aIndex = static_cast<uint8_t>(effects.size() - 1);
-    } else {
+    }
+    else {
         --aIndex;
     }
     activateEffect(aIndex);
 }
 
-void EffectsManager::changeEffectByName(const String &name)
+void EffectsManager::changeEffectByName(const String& name)
 {
     for (size_t index = 0; index < effects.size(); index++) {
-        Effect *effect = effects[index];
+        Effect* effect = effects[index];
         if (effect->settings.name == name) {
             activateEffect(index);
             break;
@@ -176,10 +182,10 @@ void EffectsManager::changeEffectByName(const String &name)
     }
 }
 
-void EffectsManager::changeEffectById(const String &id)
+void EffectsManager::changeEffectById(const String& id)
 {
     for (size_t index = 0; index < effects.size(); index++) {
-        Effect *effect = effects[index];
+        Effect* effect = effects[index];
         if (effect->settings.id == id) {
             activateEffect(index);
             break;
@@ -197,9 +203,11 @@ void EffectsManager::activateEffect(uint8_t index, bool save)
     if (activeIndex != index) {
         activeIndex = index;
     }
-    Effect *effect = effects[index];
+    Effect* effect = effects[index];
     myMatrix->setBrightness(effect->settings.brightness);
+#ifdef USE_DEBUG
     Serial.printf_P(PSTR("Activating effect[%u]: %s\n"), index, effect->settings.name.c_str());
+#endif
     effect->activate();
     if (mqtt) {
         mqtt->update();
@@ -211,17 +219,17 @@ void EffectsManager::activateEffect(uint8_t index, bool save)
     mySettings->saveLater();
 }
 
-void EffectsManager::updateCurrentSettings(const JsonObject &json)
+void EffectsManager::updateCurrentSettings(const JsonObject& json)
 {
     activeEffect()->initialize(json);
     myMatrix->setBrightness(activeEffect()->settings.brightness);
     mySettings->saveLater();
 }
 
-void EffectsManager::updateSettingsById(const String &id, const JsonObject &json)
+void EffectsManager::updateSettingsById(const String& id, const JsonObject& json)
 {
     for (size_t index = 0; index < effects.size(); index++) {
-        Effect *effect = effects[index];
+        Effect* effect = effects[index];
         if (effect->settings.id == id) {
             if (effect != effects[activeIndex]) {
                 activateEffect(index);
@@ -239,7 +247,7 @@ uint8_t EffectsManager::count()
     return static_cast<uint8_t>(effects.size());
 }
 
-Effect *EffectsManager::activeEffect()
+Effect* EffectsManager::activeEffect()
 {
     if (effects.size() > activeIndex) {
         return effects[activeIndex];
@@ -254,7 +262,7 @@ uint8_t EffectsManager::activeEffectIndex()
 }
 
 template <typename T>
-void RegisterEffect(const String &id)
+void RegisterEffect(const String& id)
 {
     effectsMap[id] = new T(id);
 }
@@ -268,29 +276,29 @@ EffectsManager::EffectsManager()
     RegisterEffect<VerticalRainbowEffect>(F("VerticalRainbow"));
     RegisterEffect<HorizontalRainbowEffect>(F("HorizontalRainbow"));
     RegisterEffect<ColorsEffect>(F("Colors"));
-    RegisterEffect<MadnessNoiseEffect>(F("MadnessNoise"));
-    RegisterEffect<CloudNoiseEffect>(F("CloudNoise"));
-    RegisterEffect<LavaNoiseEffect>(F("LavaNoise"));
-    RegisterEffect<PlasmaNoiseEffect>(F("PlasmaNoise"));
-    RegisterEffect<RainbowNoiseEffect>(F("RainbowNoise"));
-    RegisterEffect<RainbowStripeNoiseEffect>(F("RainbowStripeNoise"));
-    RegisterEffect<ZebraNoiseEffect>(F("ZebraNoise"));
-    RegisterEffect<ForestNoiseEffect>(F("ForestNoise"));
-    RegisterEffect<OceanNoiseEffect>(F("OceanNoise"));
+    // RegisterEffect<MadnessNoiseEffect>(F("MadnessNoise"));
+    // RegisterEffect<CloudNoiseEffect>(F("CloudNoise"));
+    // RegisterEffect<LavaNoiseEffect>(F("LavaNoise"));
+    // RegisterEffect<PlasmaNoiseEffect>(F("PlasmaNoise"));
+    // RegisterEffect<RainbowNoiseEffect>(F("RainbowNoise"));
+    // RegisterEffect<RainbowStripeNoiseEffect>(F("RainbowStripeNoise"));
+    // RegisterEffect<ZebraNoiseEffect>(F("ZebraNoise"));
+    // RegisterEffect<ForestNoiseEffect>(F("ForestNoise"));
+    // RegisterEffect<OceanNoiseEffect>(F("OceanNoise"));
     RegisterEffect<ColorEffect>(F("Color"));
     RegisterEffect<SnowEffect>(F("Snow"));
     RegisterEffect<MatrixEffect>(F("Matrix"));
     RegisterEffect<LightersEffect>(F("Lighters"));
-    RegisterEffect<ClockEffect>(F("Clock"));
-    RegisterEffect<ClockHorizontal1Effect>(F("ClockHorizontal1"));
-    RegisterEffect<ClockHorizontal2Effect>(F("ClockHorizontal2"));
-    RegisterEffect<ClockHorizontal3Effect>(F("ClockHorizontal3"));
+    // RegisterEffect<ClockEffect>(F("Clock"));
+    // RegisterEffect<ClockHorizontal1Effect>(F("ClockHorizontal1"));
+    // RegisterEffect<ClockHorizontal2Effect>(F("ClockHorizontal2"));
+    // RegisterEffect<ClockHorizontal3Effect>(F("ClockHorizontal3"));
     RegisterEffect<StarfallEffect>(F("Starfall"));
     RegisterEffect<DiagonalRainbowEffect>(F("DiagonalRainbow"));
     RegisterEffect<WaterfallEffect>(F("Waterfall"));
     RegisterEffect<TwirlRainbowEffect>(F("TwirlRainbow"));
     RegisterEffect<PulseCirclesEffect>(F("PulseCircles"));
-    RegisterEffect<AnimationEffect>(F("Animation"));
+    // RegisterEffect<AnimationEffect>(F("Animation"));
     RegisterEffect<StormEffect>(F("Storm"));
     RegisterEffect<Matrix2Effect>(F("Matrix2"));
     RegisterEffect<TrackingLightersEffect>(F("TrackingLighters"));
@@ -315,12 +323,12 @@ EffectsManager::EffectsManager()
     RegisterEffect<FlockEffect>(F("Flock"));
     RegisterEffect<WhirlEffect>(F("Whirl"));
     RegisterEffect<WaveEffect>(F("Wave"));
-    RegisterEffect<Fire12Effect>(F("Fire12"));
-    RegisterEffect<Fire18Effect>(F("Fire18"));
-    RegisterEffect<RainNeoEffect>(F("RainNeo"));
-    RegisterEffect<TwinklesEffect>(F("Twinkles"));
-//    RegisterEffect<SoundEffect>(F("Sound"));
-//    RegisterEffect<SoundStereoEffect>(F("Stereo"));
-    RegisterEffect<DMXEffect>(F("DMX"));
-    RegisterEffect<ScrollingTextEffect>(F("Text"));
+    // RegisterEffect<Fire12Effect>(F("Fire12"));
+    // RegisterEffect<Fire18Effect>(F("Fire18"));
+    // RegisterEffect<RainNeoEffect>(F("RainNeo"));
+    // RegisterEffect<TwinklesEffect>(F("Twinkles"));
+    //    RegisterEffect<SoundEffect>(F("Sound"));
+    //    RegisterEffect<SoundStereoEffect>(F("Stereo"));
+    // RegisterEffect<DMXEffect>(F("DMX"));
+    // RegisterEffect<ScrollingTextEffect>(F("Text"));
 }

@@ -4,26 +4,26 @@
 
 #include "Settings.h"
 
-namespace  {
+namespace {
 
-TimeClient *object = nullptr;
+    TimeClient* object = nullptr;
 
-int timeOffset = 3 * 3600; // GMT + 3
-int updateInterval = 60 * 1000; // 1 min
+    int timeOffset = 3 * 3600; // GMT + 3
+    int updateInterval = 60 * 1000; // 1 min
 
-WiFiUDP *wifiUdp = nullptr;
-NTPClient *ntp = nullptr;
+    WiFiUDP* wifiUdp = nullptr;
+    NTPClient* ntp = nullptr;
 
-uint32_t defaultInterval = 5 * 60 * 1000; // 5 min
-uint32_t interval = 0;
-uint32_t timer = 0;
+    uint32_t defaultInterval = 5 * 60 * 1000; // 5 min
+    uint32_t interval = 0;
+    uint32_t timer = 0;
 
-unsigned long hoursNum = 0;
-String hoursString = "88";
-unsigned long minutesNum = 0;
-String minutesString = "88";
-unsigned long secondsNum = 0;
-String secondsString = "88";
+    unsigned long hoursNum = 0;
+    String hoursString = "88";
+    unsigned long minutesNum = 0;
+    String minutesString = "88";
+    unsigned long secondsNum = 0;
+    String secondsString = "88";
 
 } // namespace
 
@@ -33,11 +33,13 @@ void TimeClient::Initialize()
         return;
     }
 
+#ifdef USE_DEBUG
     Serial.println(F("Initializing TimeClient"));
+#endif
     object = new TimeClient;
 }
 
-TimeClient *TimeClient::instance()
+TimeClient* TimeClient::instance()
 {
     return object;
 }
@@ -66,7 +68,8 @@ void TimeClient::setInterval(uint32_t timerInterval)
 
     if (timerInterval == 0) {
         interval = defaultInterval;
-    } else {
+    }
+    else {
         interval = timerInterval;
     }
     forceUpdate();
@@ -129,8 +132,10 @@ TimeClient::TimeClient()
     interval = defaultInterval;
     timer = millis();
 
+#ifdef USE_DEBUG
     Serial.printf_P(
         PSTR("Initializing GyverTimer: %s, offset: %d\n"),
-            mySettings->connectionSettings.ntpServer.c_str(),
-            timeOffset);
+        mySettings->connectionSettings.ntpServer.c_str(),
+        timeOffset);
+#endif
 }

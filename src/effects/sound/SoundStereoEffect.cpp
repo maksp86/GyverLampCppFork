@@ -111,17 +111,17 @@ void SoundStereoEffect::tick()
         }
     }
 
-    arduinoFFT FFT1(lvReal, lvImag, SAMPLES, samplingFrequency);
-    FFT1.Windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);
-    FFT1.Compute(FFT_FORWARD);
-    FFT1.ComplexToMagnitude();
+    ArduinoFFT<double> FFT1 = ArduinoFFT<double>(lvReal, lvImag, SAMPLES, samplingFrequency);
+    FFT1.windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);
+    FFT1.compute(FFT_FORWARD);
+    FFT1.complexToMagnitude();
 
     delete[] lvImag;
 
-    arduinoFFT FFT2(rvReal, rvImag, SAMPLES, samplingFrequency);
-    FFT2.Windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);
-    FFT2.Compute(FFT_FORWARD);
-    FFT2.ComplexToMagnitude();
+    ArduinoFFT<double> FFT2 = ArduinoFFT<double>(rvReal, rvImag, SAMPLES, samplingFrequency);
+    FFT2.windowing(FFT_WIN_TYP_HAMMING, FFT_FORWARD);
+    FFT2.compute(FFT_FORWARD);
+    FFT2.complexToMagnitude();
 
     delete[] rvImag;
 
